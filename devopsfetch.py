@@ -37,8 +37,12 @@ def nginx_domain_details(domain):
         return file.readlines()
 
 def list_users():
-    result = subprocess.run(['lastlog'], stdout=subprocess.PIPE)
-    return result.stdout.decode('utf-8')
+    try:
+        result = subprocess.run(['lastlog'], stdout=subprocess.PIPE, text=True, check=True)
+        return result.stdout
+    except subprocess.CalledProcessError as e:
+        print(f"An error occurred while running lastlog: {e}")
+        return None
 
 def user_details(username):
     result = subprocess.run(['finger', username], stdout=subprocess.PIPE)
@@ -70,6 +74,10 @@ Options:
 """)
 
 def main():
+   # users = list_users()
+   # if users:
+    #    print(users)
+        
     if '--port' in sys.argv:
         if len(sys.argv) == 3:
             port_number = sys.argv[2]
