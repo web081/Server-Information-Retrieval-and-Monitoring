@@ -38,11 +38,13 @@ def nginx_domain_details(domain):
 
 def list_users():
     try:
-        result = subprocess.run(['lastlog'], stdout=subprocess.PIPE, text=True, check=True)
-        return result.stdout
+        result = subprocess.run(['last'], stdout=subprocess.PIPE, text=True, check=True)
+        output = result.stdout.splitlines()
+        headers = ['Username', 'Last Login']
+        user_data = [line.split(None, 2) for line in output[1:]]  # Skip the header line
+        print(tabulate(user_data, headers=headers, tablefmt='grid'))
     except subprocess.CalledProcessError as e:
-        print(f"An error occurred while running lastlog: {e}")
-        return None
+        print(f"An error occurred: {e}")
 
 def user_details(username):
     result = subprocess.run(['finger', username], stdout=subprocess.PIPE)
@@ -74,7 +76,7 @@ Options:
 """)
 
 def main():
-   # users = list_users()
+    users = list_users()
    # if users:
     #    print(users)
         
